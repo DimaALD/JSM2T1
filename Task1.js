@@ -4,7 +4,7 @@ const fs = require('fs')
 
 const path = './todo.json'
 
-yargs.command('add [title] [body]',
+yargs.usage('Usage: <cmd> <title> <body>').command('add <title> <body>',
   'Create new note', {}, (argv) => {
     const file = getJSON()
     addNote(file, argv)
@@ -15,12 +15,12 @@ yargs.command('add [title] [body]',
       const file = getJSON()
       printAllNotes(file)
     })
-  .command('read [title]',
+  .command('read <title>',
     "Read one note by it's title", {}, (argv) => {
       const file = getJSON()
       readByTitle(file, argv.title)
     })
-  .command('remove [title]',
+  .command('remove <title>',
     'Remove note by title', {}, (argv) => {
       const file = getJSON()
       removeByTitle(file, argv.title)
@@ -33,7 +33,7 @@ function getJSON () {
   if (fs.existsSync(path)) {
     return require(path)
   } else {
-    throw new Error('Note.json file is not found')
+    throw new Error('todo.json file is not found')
   }
 }
 
