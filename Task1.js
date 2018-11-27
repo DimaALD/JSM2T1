@@ -1,23 +1,33 @@
+/* eslint-disable no-unused-expressions */
 const yargs = require('yargs')
 const fs = require('fs')
 
 const path = './todo.json'
 
-yargs.command('add [title] [body]', 'Create new note', {}, (argv) => {
-  const file = getJSON()
-  addNote(file, argv)
-  printInFile(file)
-}).command('list', 'List of all notes', {}, () => {
-  const file = getJSON()
-  printAllNotes(file)
-}).command('read [title]', "Read one note by it's title", {}, (argv) => {
-  const file = getJSON()
-  readByTitle(file, argv.title)
-}).command('remove [title]', 'Remove note by title', {}, (argv) => {
-  const file = getJSON()
-  removeByTitle(file, argv.title)
-  printInFile(file)
-}).demandCommand(1, 'You need at least one command before moving on').argv
+yargs.command('add [title] [body]',
+  'Create new note', {}, (argv) => {
+    const file = getJSON()
+    addNote(file, argv)
+    printInFile(file)
+  })
+  .command('list',
+    'List of all notes', {}, () => {
+      const file = getJSON()
+      printAllNotes(file)
+    })
+  .command('read [title]',
+    "Read one note by it's title", {}, (argv) => {
+      const file = getJSON()
+      readByTitle(file, argv.title)
+    })
+  .command('remove [title]',
+    'Remove note by title', {}, (argv) => {
+      const file = getJSON()
+      removeByTitle(file, argv.title)
+      printInFile(file)
+    })
+  .demandCommand(1, 'You need at least one command before moving on')
+  .argv
 
 function getJSON () {
   if (fs.existsSync(path)) {
