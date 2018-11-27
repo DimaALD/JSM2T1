@@ -4,7 +4,7 @@ const fs = require('fs')
 
 const path = './todo.json'
 
-yargs.usage('Usage: <cmd> <title> <body>').command('add <title> <body>',
+yargs.command('add <title> <body>',
   'Create new note', {}, (argv) => {
     const file = getJSON()
     addNote(file, argv)
