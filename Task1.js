@@ -33,7 +33,7 @@ function getJSON () {
   if (fs.existsSync(path)) {
     return require(path)
   } else {
-    throw new Error('Note.json file is not found')
+    throw new Error('todo.json file is not found')
   }
 }
 
