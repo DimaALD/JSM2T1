@@ -4,7 +4,8 @@
   "description": "",
   "main": "Task1.js",
   "dependencies": {
-    "yargs": "*"
+    "yargs": "*",
+    "xlsx": "^0.14.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 const yargs = require('yargs')
 const fs = require('fs')
+const XLSX = require('xlsx')
 
 const path = './todo.json'
 
@@ -26,6 +27,13 @@ yargs.command('add <title> <body>',
       removeByTitle(file, argv.title)
       printInFile(file)
     })
+  .command('writeToExcel', 'Write all notes in xslx format', {}, () => {
+    const file = getJSON()
+    writeToExcel(file)
+  }).command('readFromExcel <path>', 'Read from xlsx and write in json', {}, (argv) => {
+    const file = getJSON()
+    readFromXlsx(file, argv.path)
+  })
   .demandCommand(1, 'You need at least one command before moving on')
   .argv
 
@@ -39,7 +47,7 @@ function getJSON () {
 
 function addNote (file, argv) {
   checkDublicates(file, argv)
-  file.push({ title: argv.title, body: argv.body })
+  file.push({ title: argv.title, body: argv.body, time: getCurrentDate() })
 }
 
 function printInFile (file) {
@@ -52,7 +60,7 @@ function printAllNotes (file) {
     throw new Error('List of notes is empty')
   } else {
     file.forEach(element => {
-      console.log('\r\n' + 'title : ' + element.title + '\r\n' + 'body : ' + element.body + '\r\n')
+      console.log('\r\n' + 'title : ' + element.title + '\r\n' + 'body : ' + element.body + '\r\n' + element.date + '\r\n')
     })
   }
 }
@@ -62,7 +70,7 @@ function readByTitle (file, title) {
   file.forEach(element => {
     if (element.title === title) {
       resultOfSearch = true
-      console.log('\r\n' + 'title : ' + element.title + '\r\n' + 'body : ' + element.body + '\r\n')
+      console.log('\r\n' + 'title : ' + element.title + '\r\n' + 'body : ' + element.body + '\r\n' + element.date + '\r\n')
     }
   })
   if (resultOfSearch !== true) {
@@ -83,11 +91,41 @@ function removeByTitle (file, title) {
     throw new Error('Note is not deleted')
   }
 }
-
+function writeToExcel (json) {
+  const wb = XLSX.utils.book_new()
+  const str = JSON.stringify(json).split('"body":').join('"note":')
+  const sheet = XLSX.utils.json_to_sheet(JSON.parse(str))
+  XLSX.utils.book_append_sheet(wb, sheet)
+  XLSX.writeFile(wb, 'notes.xlsx')
+  if (fs.existsSync('notes.xlsx')) {
+    console.log('Xlsx file was created')
+  } else {
+    throw new Error("'Error.JSON file wasn't converted")
+  }
+}
 function checkDublicates (file, argv) {
   file.forEach(element => {
-    if (element.title === argv.title || element.body === argv.body) {
+    if (element.title === argv.title) {
       throw new Error('Notes must be unique')
     }
   })
+}
+
+function getCurrentDate () {
+  const date = new Date()
+  const datestring = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' +
+date.getHours() + ':' + date.getMinutes() + date.getSeconds()
+  return datestring
+}
+
+function readFromXlsx (json, path) {
+  const workbook = XLSX.readFile(path)
+  const sheetnamelist = workbook.SheetNames
+  let data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetnamelist[0]])
+  return json.concat(getFiltered(json, data))
+}
+// to do
+function getFiltered (json, data) {
+  let filtered = json.filter(element => !data.find(note => element.title === note.title))
+  return filtered
 }
