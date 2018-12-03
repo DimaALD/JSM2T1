@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable no-unused-expressions */
 const yargs = require('yargs')
 const fs = require('fs')
@@ -27,13 +28,20 @@ yargs.command('add <title> <body>',
       removeByTitle(file, argv.title)
       printInFile(file)
     })
-  .command('writeToExcel', 'Write all notes in xslx format', {}, () => {
+  .command('writeToExcel',
+  'Write all notes in xslx format', {}, () => {
     const file = getJSON()
     writeToExcel(file)
-  }).command('readFromExcel <path>', 'Read from xlsx and write in json', {}, (argv) => {
+    })
+    .command('readFromExcel <path>', 'Read from xlsx and write in json', {}, (argv) => {
     const file = getJSON()
     readFromXlsx(file, argv.path)
   })
+  .command('findAndUpdate <title> [newTitle] [newBody]',
+    'Find note by title and update title or body', {}, (argv) => {
+      const file = getJSON()
+      findAndUpdate(file, argv.title, argv.newTitle, argv.newBody)
+    })
   .demandCommand(1, 'You need at least one command before moving on')
   .argv
 
@@ -59,9 +67,7 @@ function printAllNotes (file) {
   if (file.length === 0) {
     throw new Error('List of notes is empty')
   } else {
-    file.forEach(element => {
-      console.log('\r\n' + 'title : ' + element.title + '\r\n' + 'body : ' + element.body + '\r\n' + element.date + '\r\n')
-    })
+    file.forEach(obj => { Object.keys(obj).forEach(key => { console.log(+key + ':' + obj[key] + '\r\n') }) })
   }
 }
 
@@ -70,7 +76,7 @@ function readByTitle (file, title) {
   file.forEach(element => {
     if (element.title === title) {
       resultOfSearch = true
-      console.log('\r\n' + 'title : ' + element.title + '\r\n' + 'body : ' + element.body + '\r\n' + element.date + '\r\n')
+      Object.keys(element).forEach(key => { console.log(key + ':' + element[key] + '\r\n') })
     }
   })
   if (resultOfSearch !== true) {
@@ -93,8 +99,7 @@ function removeByTitle (file, title) {
 }
 function writeToExcel (json) {
   const wb = XLSX.utils.book_new()
-  const str = JSON.stringify(json).split('"body":').join('"note":')
-  const sheet = XLSX.utils.json_to_sheet(JSON.parse(str))
+  const sheet = XLSX.utils.json_to_sheet(json)
   XLSX.utils.book_append_sheet(wb, sheet)
   XLSX.writeFile(wb, 'notes.xlsx')
   if (fs.existsSync('notes.xlsx')) {
@@ -124,8 +129,19 @@ function readFromXlsx (json, path) {
   let data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetnamelist[0]])
   return json.concat(getFiltered(json, data))
 }
-// to do
+
 function getFiltered (json, data) {
   let filtered = json.filter(element => !data.find(note => element.title === note.title))
   return filtered
+}
+
+function findAndUpdate (file, title, newTitle, newBody) {
+  if (newTitle && newBody) {
+    file.forEach(element => {
+      if(element.title === title){
+        element.title === newTitle
+        element.body === newBody
+      }
+    })
+  }
 }

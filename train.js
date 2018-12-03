@@ -13,7 +13,7 @@ const sheetnamelist = workbook.SheetNames
 let data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetnamelist[0]])
 
 function checkData (json, data) {
-  let filtered = json.filter(element => !data.find(note => element.title === note.title))
+  let filtered = data.filter(element => !json.find(note => element.title === note.title))
   return filtered
 }
 console.log(checkData(todo, data))
