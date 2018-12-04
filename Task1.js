@@ -49,8 +49,8 @@ yargs.command('add <title> <body>',
       let updated = findAndUpdate(file, argv.title, argv.newTitle, argv.newBody)
       printInFile(updated)
     })
-    .command('sort <type>',
-    'Sort all notes by chosen type', {}, (argv) => {
+    .command('sort <type> <order>',
+    'Sort all notes by chosen type and order. desc - sort in descending order . asc - sort in ascending order', {}, (argv) => {
       const file = getJSON()
       sortAllNotes(file, argv)
     })
@@ -184,33 +184,42 @@ function findAndUpdate (file, title, newTitle, newBody) {
    }
 
    function sortAllNotes (file, argv) {
+      let order
+      if (argv.order === 'asc') {
+        order = -1
+      }
+      if (argv.order === 'desc') {
+        order = 1
+      }
       switch (argv.type) {
         case 'date':
         file.sort((date1, date2) => {
-          return Number(new Date(date2.time)) - Number(new Date(date1.time))
+          if (date2.time > date1.time) { return order }
+          if (date2.time < date1.time) { return (-1) * order }
+          return 0
        })
        printInFile(file)
        break
        case 'note length':
        file.sort((note1, note2) => {
-        if (note1.title.length + note1.body.length < note2.title.length + note2.body.length) { return -1 }
-        if (note1.title.length + note1.body.length > note2.title.length + note2.body.length) { return 1 }
+        if (note1.title.length + note1.body.length < note2.title.length + note2.body.length) { return order }
+        if (note1.title.length + note1.body.length > note2.title.length + note2.body.length) { return (-1) * order }
         return 0
        })
        printInFile(file)
        break
        case 'title length':
        file.sort((note1, note2) => {
-        if (note1.title.length < note2.title.length) { return -1 }
-        if (note1.title.length > note2.title.length) { return 1 }
+        if (note1.title.length < note2.title.length) { return order }
+        if (note1.title.length > note2.title.length) { return (-1) * order }
         return 0
        })
        printInFile(file)
        break
        case 'alphabetical':
        file.sort((note1, note2) => {
-        if (note1.title < note2.title) { return -1 }
-        if (note1.title > note2.title) { return 1 }
+        if (note1.title < note2.title) { return order }
+        if (note1.title > note2.title) { return (-1) * order }
         return 0
        })
        printInFile(file)
