@@ -160,7 +160,7 @@ function findAndUpdate (file, title, newTitle, newBody) {
       throw new Error('Error.Input new title or new body')
   } else {
     let changed = file.filter(element => {
-      if (element.title.toLowerCase().trim() === title.toLowerCase().trim()) {
+      if (element.title.toString().toLowerCase().trim() === title.toString().toLowerCase().trim()) {
         element.title = newTitle || element.title
         element.body = newBody || element.body
       }
