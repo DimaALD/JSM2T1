@@ -1,7 +1,6 @@
 const main = require('./mainFunctionality')
 const xlsx = require('./xlsx')
-const sort = require('./sort')
-const update = require('./updateNote')
+const addFunc = require('./addFunc')
 const yargs = require('yargs')
 // eslint-disable-next-line no-unused-expressions
 yargs.command('add <title> <body>',
@@ -44,13 +43,13 @@ yargs.command('add <title> <body>',
       const file = main.getJSON()
       main.checkTitleExistance(file, argv.title)
       main.checkDublicates(file, argv.newTitle)
-      let updated = update.findAndUpdate(file, argv.title, argv.newTitle, argv.newBody)
+      let updated = addFunc.findAndUpdate(file, argv.title, argv.newTitle, argv.newBody)
       main.printInFile(updated)
     })
   .command('sort <type> <order>',
     'Sort all notes by chosen type and order. desc - sort in descending order . asc - sort in ascending order', {}, (argv) => {
       const file = main.getJSON()
-      sort.sortAllNotes(file, argv)
+      addFunc.sortAllNotes(file, argv)
     })
   .demandCommand(1, 'You need at least one command before moving on')
   .argv
