@@ -14,7 +14,7 @@ const sortAllNotes = function sortAllNotes (file, argv) {
         if (date2.time < date1.time) { return (-1) * order }
         return 0
       })
-      main.printInFile(file)
+      main.printInFile(file, argv.path)
       break
     case 'note length':
       file.sort((note1, note2) => {
@@ -22,7 +22,7 @@ const sortAllNotes = function sortAllNotes (file, argv) {
         if (note1.title.length + note1.body.length > note2.title.length + note2.body.length) { return (-1) * order }
         return 0
       })
-      main.printInFile(file)
+      main.printInFile(file, argv.path)
       break
     case 'title length':
       file.sort((note1, note2) => {
@@ -30,7 +30,7 @@ const sortAllNotes = function sortAllNotes (file, argv) {
         if (note1.title.length > note2.title.length) { return (-1) * order }
         return 0
       })
-      main.printInFile(file)
+      main.printInFile(file, argv.path)
       break
     case 'alphabetical':
       file.sort((note1, note2) => {
@@ -38,9 +38,10 @@ const sortAllNotes = function sortAllNotes (file, argv) {
         if (note1.title > note2.title) { return (-1) * order }
         return 0
       })
-      main.printInFile(file)
+      main.printInFile(file, argv.path)
       break
   }
+  console.log('Notes were sorted')
 }
 
 const findAndUpdate = function (file, title, newTitle, newBody) {

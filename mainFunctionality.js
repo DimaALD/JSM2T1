@@ -1,11 +1,10 @@
 const fs = require('fs')
-const path = './todo.json'
 
-const getJSON = function () {
-  if (fs.existsSync(path)) {
-    return require(path)
+const getJSON = function (path) {
+  if (fs.existsSync(path + '.json')) {
+    return require(path + '.json')
   } else {
-    throw new Error('todo.json file is not found')
+    return []
   }
 }
 
@@ -14,24 +13,27 @@ const addNote = function (file, title, body) {
   file.push({ title: title, body: body, time: getCurrentDate() })
 }
 
-const printInFile = function (file) {
-  fs.writeFileSync('todo.json', JSON.stringify(file, null, ' '))
-  console.log('Note is added in file')
+const printInFile = function (file, path) {
+  fs.writeFileSync(path + '.json', JSON.stringify(file, null, ' '))
+  console.log('Note is successfuly saved')
 }
 
 const printAllNotes = function (file) {
   if (file.length === 0) {
     throw new Error('List of notes is empty')
   } else {
-    file.forEach(obj => { Object.keys(obj).forEach(key => { console.log(key + ':' + obj[key] + '\r\n') }) })
+    file.forEach(obj => {
+      console.log(JSON.stringify(obj, null, ' ').replace('{', '').replace('}', ''))
+    })
   }
 }
+
 const readByTitle = function (file, title) {
   let resultOfSearch = false
   file.forEach(element => {
     if (element.title === title) {
       resultOfSearch = true
-      Object.keys(element).forEach(key => { console.log(key + ':' + element[key] + '\r\n') })
+      console.log(JSON.stringify(element, null, ' ').replace('{', '').replace('}', ''))
     }
   })
   if (resultOfSearch !== true) {
